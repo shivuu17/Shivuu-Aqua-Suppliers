@@ -10,3 +10,15 @@ coverage/
 *.swp
 *.swo
 *~
+
+# Production build
+client/dist/
+server/dist/
+
+# Environment files
+.env.local
+.env.production
+
+# Lock files (optional - uncomment if you want to exclude)
+# package-lock.json
+# yarn.lock
