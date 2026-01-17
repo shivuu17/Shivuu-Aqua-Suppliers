@@ -4,11 +4,18 @@ export const LABEL_STYLES = ['Classic', 'Premium', 'Traditional'];
 
 export const INQUIRY_STATUS = ['New', 'Contacted', 'Converted'];
 
+// File upload configuration
+export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+export const MAX_FILE_SIZE_MB = 5;
+
 export const BUSINESS_PHONE = '+919876543210';
 export const BUSINESS_WHATSAPP = '919876543210';
 export const BUSINESS_EMAIL = 'contact@shivuuaqua.com';
 
-export const WHATSAPP_MESSAGE = encodeURIComponent('Hi, I want demo bottles for my cafe.');
+// Default WhatsApp message - can be customized by business owner
+export const DEFAULT_WHATSAPP_MESSAGE = 'Hi, I want demo bottles for my cafe.';
+
+export const WHATSAPP_MESSAGE = encodeURIComponent(DEFAULT_WHATSAPP_MESSAGE);
 
 export const getWhatsAppLink = (message = WHATSAPP_MESSAGE) => {
   return `https://wa.me/${BUSINESS_WHATSAPP}?text=${message}`;

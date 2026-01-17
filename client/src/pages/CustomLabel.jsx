@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, Package } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
-import { BOTTLE_SIZES, LABEL_STYLES } from '../utils/constants';
+import { BOTTLE_SIZES, LABEL_STYLES, MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from '../utils/constants';
 
 const CustomLabel = () => {
   const navigate = useNavigate();
@@ -20,8 +20,8 @@ const CustomLabel = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('File size should be less than 5MB');
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`File size should be less than ${MAX_FILE_SIZE_MB}MB`);
         return;
       }
       if (!file.type.startsWith('image/')) {

@@ -11,6 +11,17 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendInquiryConfirmation = async (inquiry) => {
+  // Helper function to escape HTML special characters
+  const escapeHtml = (text) => {
+    if (!text) return '';
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  };
+
   const mailOptions = {
     from: `"Shivuu Aqua Supplies" <${process.env.EMAIL_USER}>`,
     to: process.env.ADMIN_EMAIL,
@@ -22,38 +33,38 @@ export const sendInquiryConfirmation = async (inquiry) => {
         <table style="width: 100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd;"><strong>Name:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${inquiry.name}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(inquiry.name)}</td>
           </tr>
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd;"><strong>Business:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${inquiry.businessName}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(inquiry.businessName)}</td>
           </tr>
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd;"><strong>Phone:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${inquiry.phone}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(inquiry.phone)}</td>
           </tr>
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd;"><strong>City:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${inquiry.city}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(inquiry.city)}</td>
           </tr>
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd;"><strong>Bottle Size:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${inquiry.bottleSize}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(inquiry.bottleSize)}</td>
           </tr>
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd;"><strong>Quantity:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${inquiry.quantity}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(inquiry.quantity)}</td>
           </tr>
           ${inquiry.address ? `
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd;"><strong>Address:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${inquiry.address}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(inquiry.address)}</td>
           </tr>
           ` : ''}
           ${inquiry.message ? `
           <tr>
             <td style="padding: 8px; border: 1px solid #ddd;"><strong>Message:</strong></td>
-            <td style="padding: 8px; border: 1px solid #ddd;">${inquiry.message}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(inquiry.message)}</td>
           </tr>
           ` : ''}
         </table>

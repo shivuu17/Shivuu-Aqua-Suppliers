@@ -98,12 +98,33 @@ router.get('/export/csv', authMiddleware, async (req, res, next) => {
   try {
     const inquiries = await Inquiry.find().sort({ createdAt: -1 });
 
+    // Helper function to escape CSV fields
+    const escapeCsvField = (field) => {
+      if (field == null) return '';
+      const str = String(field);
+      // Escape double quotes and wrap in quotes if contains special chars
+      if (str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
     // Create CSV header
     const csvHeader = 'Name,Business Name,Phone,City,Bottle Size,Quantity,Address,Status,Created At\n';
     
     // Create CSV rows
     const csvRows = inquiries.map(inquiry => 
-      `"${inquiry.name}","${inquiry.businessName}","${inquiry.phone}","${inquiry.city}","${inquiry.bottleSize}","${inquiry.quantity}","${inquiry.address || ''}","${inquiry.status}","${inquiry.createdAt}"`
+      [
+        escapeCsvField(inquiry.name),
+        escapeCsvField(inquiry.businessName),
+        escapeCsvField(inquiry.phone),
+        escapeCsvField(inquiry.city),
+        escapeCsvField(inquiry.bottleSize),
+        escapeCsvField(inquiry.quantity),
+        escapeCsvField(inquiry.address),
+        escapeCsvField(inquiry.status),
+        escapeCsvField(inquiry.createdAt)
+      ].join(',')
     ).join('\n');
 
     const csv = csvHeader + csvRows;

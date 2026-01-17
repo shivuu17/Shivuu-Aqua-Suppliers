@@ -18,20 +18,32 @@ const createAdmin = async () => {
     const existingAdmin = await Admin.findOne({ username: 'admin' });
     if (existingAdmin) {
       console.log('Admin user already exists!');
+      console.log('Username:', existingAdmin.username);
+      console.log('\nTo reset password, manually update in MongoDB or delete this admin first.');
       process.exit(0);
+    }
+
+    // Use environment variable for password, or default (with warning)
+    const password = process.env.ADMIN_DEFAULT_PASSWORD || 'admin123';
+    
+    if (!process.env.ADMIN_DEFAULT_PASSWORD) {
+      console.log('\n⚠️  WARNING: Using default password "admin123"');
+      console.log('Set ADMIN_DEFAULT_PASSWORD in .env for a custom password');
+      console.log('IMPORTANT: Change this password immediately after first login!\n');
     }
 
     // Create new admin
     const admin = await Admin.create({
       username: 'admin',
-      password: 'admin123', // CHANGE THIS IN PRODUCTION!
-      email: 'admin@shivuuaqua.com',
+      password: password,
+      email: process.env.ADMIN_EMAIL || 'admin@shivuuaqua.com',
     });
 
     console.log('✓ Admin user created successfully!');
     console.log('Username:', admin.username);
     console.log('Email:', admin.email);
-    console.log('\n⚠️  IMPORTANT: Change the default password after first login!');
+    console.log('\n⚠️  IMPORTANT: Change the password after first login!');
+    console.log('Login at: /admin/login\n');
     
     process.exit(0);
   } catch (error) {
