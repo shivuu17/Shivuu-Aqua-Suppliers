@@ -2,15 +2,15 @@ import { Package } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 card-hover">
+    <div className="frosted-panel rounded-2xl p-6 soft-shadow card-hover">
       <div className="flex justify-center mb-4">
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={product.size} className="h-40 object-contain" />
         ) : (
-          <Package className="h-40 w-40 text-secondary-400" />
+          <Package className="h-40 w-40 text-secondary-500" />
         )}
       </div>
-      <h3 className="text-xl font-bold text-center text-primary-600 mb-2">
+      <h3 className="text-xl font-bold text-center text-primary-800 mb-2">
         {product.size} Bottle
       </h3>
       {product.priceRange && (

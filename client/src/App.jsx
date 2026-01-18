@@ -9,9 +9,6 @@ import CustomLabel from './pages/CustomLabel';
 import Inquiry from './pages/Inquiry';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import AdminLogin from './pages/admin/Login';
-import AdminDashboard from './pages/admin/Dashboard';
-import ProtectedRoute from './components/ProtectedRoute';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -27,15 +24,6 @@ function App() {
             <Route path="/inquiry" element={<Inquiry />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

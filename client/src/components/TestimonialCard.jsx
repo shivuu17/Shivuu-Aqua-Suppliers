@@ -2,9 +2,9 @@ import { Quote } from 'lucide-react';
 
 const TestimonialCard = ({ testimonial }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 card-hover">
+    <div className="glass-card rounded-2xl p-6 soft-shadow card-hover h-full flex flex-col">
       <Quote className="h-8 w-8 text-secondary-400 mb-4" />
-      <p className="text-gray-700 mb-4 italic">"{testimonial.text}"</p>
+      <p className="text-gray-700 mb-6 italic flex-1">"{testimonial.text}"</p>
       <div className="flex items-center">
         <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 font-bold text-lg">
           {testimonial.name.charAt(0)}

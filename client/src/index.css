@@ -1,16 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply font-sans antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply antialiased;
   }
 }
 
 @layer utilities {
+  .section-shell {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .glass-card {
+    @apply bg-white/85 backdrop-blur-xl rounded-2xl shadow-soft border border-white/60;
+  }
+
+  .frosted-panel {
+    @apply bg-white/90 backdrop-blur-md border border-white/50;
+  }
+
+  .soft-shadow {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
+
+  .floating-icon {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .split-gradient-bg {
+    background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+  }
+
+  .gradient-ring::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 1.1rem;
+    background: linear-gradient(135deg, #2563eb, #06b6d4, #1d4ed8);
+    opacity: 0.45;
+    z-index: 0;
+  }
+
+  .gradient-ring > * {
+    position: relative;
+    z-index: 1;
+  }
+
   .gradient-bg {
-    background: linear-gradient(135deg, #0A2463 0%, #1E3A8A 50%, #06B6D4 100%);
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #06b6d4 100%);
   }
   
   .gradient-text {
@@ -22,15 +64,19 @@
   }
   
   .btn-primary {
-    @apply bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold 
-           hover:bg-primary-700 transition-all duration-200 
-           active:scale-95 shadow-md hover:shadow-lg;
+    @apply bg-gradient-to-r from-primary-600 to-secondary-500 text-white px-6 py-3 rounded-lg font-semibold 
+           hover:shadow-xl transition-all duration-200 
+           active:scale-95 shadow-lg shadow-primary-600/25;
   }
   
   .btn-secondary {
-    @apply bg-secondary-500 text-white px-6 py-3 rounded-lg font-semibold 
-           hover:bg-secondary-600 transition-all duration-200 
-           active:scale-95 shadow-md hover:shadow-lg;
+    @apply bg-white/90 text-primary-700 px-6 py-3 rounded-lg font-semibold 
+           hover:bg-white transition-all duration-200 
+           active:scale-95 shadow-lg shadow-primary-600/20;
+  }
+
+  .cta-pill {
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold bg-white/90 text-primary-700 shadow-md shadow-primary-600/10 ring-1 ring-white/60;
   }
 }
 
@@ -46,8 +92,41 @@
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out;
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.8s ease-out both;
 }
 
 /* Smooth scrolling */

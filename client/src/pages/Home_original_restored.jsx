@@ -28,7 +28,7 @@ const Home = () => {
     {
       icon: Shield,
       title: 'Waterproof Labels',
-      description: "Premium quality labels that won't peel or fade in water",
+      description: 'Premium quality labels that won\'t peel or fade in water',
     },
     {
       icon: Award,

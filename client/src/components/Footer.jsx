@@ -33,13 +33,13 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/custom-label" className="text-gray-400 hover:text-white transition-colors">
-                  Custom Label
+                <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
+                  About Us
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
-                  About Us
+                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">
+                  Contact
                 </Link>
               </li>
             </ul>
@@ -99,8 +99,8 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400 text-sm">
+        <div className="border-t border-navy-800 mt-8 pt-8 text-center">
+          <p className="text-gray-300 text-sm">
             &copy; {new Date().getFullYear()} Shivuu Aqua Supplies. All rights reserved.
             <br />
             Founded by Shivank Katiyar
