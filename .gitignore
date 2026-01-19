@@ -12,12 +12,20 @@ coverage/
 *~
 
 # Production build
+frontend/dist/
+backend/dist/
 client/dist/
 server/dist/
+
+# Node modules for both backend and frontend (never commit)
+backend/node_modules/
+frontend/node_modules/
 
 # Environment files
 .env.local
 .env.production
+backend/.env
+frontend/.env
 
 # Lock files (optional - uncomment if you want to exclude)
 # package-lock.json

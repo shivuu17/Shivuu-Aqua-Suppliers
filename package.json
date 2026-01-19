@@ -1,0 +1,21 @@
+{
+  "name": "shivuu-aqua-suppliers",
+  "version": "1.0.0",
+  "description": "Shivuu Aqua Suppliers - Water bottles and custom branding",
+  "private": true,
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\"",
+    "build": "cd client && npm run build",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": ["water", "bottles", "custom", "branding"],
+  "author": "Shivank Katiyar",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
