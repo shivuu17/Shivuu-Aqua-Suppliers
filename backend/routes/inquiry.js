@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import { supabase } from '../config/db.js';
+import { getSupabase } from '../config/db.js';
 import { sendInquiryConfirmation } from '../utils/email.js';
 import { authMiddleware } from '../middleware/auth.js';
 
@@ -26,6 +26,7 @@ router.post(
 
       const { name, businessName, phone, city, bottleSize, quantity, address, message, logoUrl, labelStyle } = req.body;
 
+      const supabase = getSupabase();
       const { data, error } = await supabase
         .from('inquiries')
         .insert({

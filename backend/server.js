@@ -1,7 +1,18 @@
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Load environment variables FIRST before any other imports
-dotenv.config();
+dotenv.config({ path: join(__dirname, '.env') });
+
+// Debug: Check if env vars are loaded
+console.log('Environment check:');
+console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? '✓ Loaded' : '✗ Missing');
+console.log('SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? '✓ Loaded' : '✗ Missing');
 
 import express from 'express';
 import cors from 'cors';

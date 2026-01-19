@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { supabase } from '../config/db.js';
+import { getSupabase } from '../config/db.js';
 
 const router = express.Router();
 
@@ -14,6 +14,7 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ message: 'Username and password are required' });
     }
 
+    const supabase = getSupabase();
     const { data: admin, error } = await supabase
       .from('admins')
       .select('*')

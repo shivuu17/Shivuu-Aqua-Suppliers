@@ -1,5 +1,5 @@
 import express from 'express';
-import { supabase } from '../config/db.js';
+import { getSupabase } from '../config/db.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -7,6 +7,7 @@ const router = express.Router();
 // Get all products (Public)
 router.get('/', async (req, res, next) => {
   try {
+    const supabase = getSupabase();
     const { data, error } = await supabase
       .from('products')
       .select('*')
