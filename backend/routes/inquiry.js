@@ -1,9 +1,8 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import Inquiry from '../models/Inquiry.js';
+import { supabase } from '../config/db.js';
 import { sendInquiryConfirmation } from '../utils/email.js';
 import { authMiddleware } from '../middleware/auth.js';
-import { syncInquiryToSupabase } from '../utils/supabaseClient.js';
 
 const router = express.Router();
 
@@ -25,22 +24,39 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const inquiry = await Inquiry.create(req.body);
+      const { name, businessName, phone, city, bottleSize, quantity, address, message, logoUrl, labelStyle } = req.body;
 
-      // Optional: replicate inquiry data to Supabase if configured
-      try {
-        await syncInquiryToSupabase(inquiry);
-      } catch (syncError) {
-        console.error('Failed to sync inquiry to Supabase:', syncError.message);
-      }
-      
+      const { data, error } = await supabase
+        .from('inquiries')
+        .insert({
+          name,
+          business_name: businessName,
+          phone,
+          city,
+          bottle_size: bottleSize,
+          quantity,
+          address,
+          message,
+          logo_url: logoUrl,
+          label_style: labelStyle,
+          status: 'New',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
       // Send email notification
-      await sendInquiryConfirmation(inquiry);
+      try {
+        await sendInquiryConfirmation(data);
+      } catch (emailError) {
+        console.error('Failed to send email:', emailError.message);
+      }
 
       res.status(201).json({
         success: true,
         message: 'Inquiry submitted successfully',
-        data: inquiry,
+        data,
       });
     } catch (error) {
       next(error);
@@ -52,20 +68,28 @@ router.post(
 router.get('/', authMiddleware, async (req, res, next) => {
   try {
     const { status, page = 1, limit = 10 } = req.query;
-    const query = status ? { status } : {};
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
 
-    const inquiries = await Inquiry.find(query)
-      .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
+    let query = supabase
+      .from('inquiries')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range((pageNum - 1) * limitNum, pageNum * limitNum - 1);
 
-    const count = await Inquiry.countDocuments(query);
+    if (status) {
+      query = query.eq('status', status);
+    }
+
+    const { data, error, count } = await query;
+
+    if (error) throw error;
 
     res.json({
       success: true,
-      data: inquiries,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page,
+      data: data || [],
+      totalPages: Math.ceil(count / limitNum),
+      currentPage: pageNum,
       total: count,
     });
   } catch (error) {
@@ -82,19 +106,22 @@ router.patch('/:id', authMiddleware, async (req, res, next) => {
       return res.status(400).json({ message: 'Invalid status' });
     }
 
-    const inquiry = await Inquiry.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true, runValidators: true }
-    );
+    const { data, error } = await supabase
+      .from('inquiries')
+      .update({ status })
+      .eq('id', req.params.id)
+      .select()
+      .single();
 
-    if (!inquiry) {
+    if (error) throw error;
+
+    if (!data) {
       return res.status(404).json({ message: 'Inquiry not found' });
     }
 
     res.json({
       success: true,
-      data: inquiry,
+      data,
     });
   } catch (error) {
     next(error);
@@ -104,7 +131,12 @@ router.patch('/:id', authMiddleware, async (req, res, next) => {
 // Export inquiries to CSV (Admin)
 router.get('/export/csv', authMiddleware, async (req, res, next) => {
   try {
-    const inquiries = await Inquiry.find().sort({ createdAt: -1 });
+    const { data, error } = await supabase
+      .from('inquiries')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
 
     // Helper function to escape CSV fields
     const escapeCsvField = (field) => {
@@ -121,17 +153,17 @@ router.get('/export/csv', authMiddleware, async (req, res, next) => {
     const csvHeader = 'Name,Business Name,Phone,City,Bottle Size,Quantity,Address,Status,Created At\n';
     
     // Create CSV rows
-    const csvRows = inquiries.map(inquiry => 
+    const csvRows = (data || []).map(inquiry => 
       [
         escapeCsvField(inquiry.name),
-        escapeCsvField(inquiry.businessName),
+        escapeCsvField(inquiry.business_name),
         escapeCsvField(inquiry.phone),
         escapeCsvField(inquiry.city),
-        escapeCsvField(inquiry.bottleSize),
+        escapeCsvField(inquiry.bottle_size),
         escapeCsvField(inquiry.quantity),
         escapeCsvField(inquiry.address),
         escapeCsvField(inquiry.status),
-        escapeCsvField(inquiry.createdAt)
+        escapeCsvField(inquiry.created_at)
       ].join(',')
     ).join('\n');
 

@@ -33,10 +33,15 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
       },
-      boxShadow: {
-        'soft': '0 10px 25px rgba(0, 0, 0, 0.05)',
+      borderRadius: {
+        '3xl': '20px',
+        '4xl': '24px',
+      },
+      backdropBlur: {
+        'glass': '10px',
       },
     },
   },

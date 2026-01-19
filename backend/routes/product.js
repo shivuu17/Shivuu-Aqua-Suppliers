@@ -1,5 +1,5 @@
 import express from 'express';
-import Product from '../models/Product.js';
+import { supabase } from '../config/db.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -7,10 +7,16 @@ const router = express.Router();
 // Get all products (Public)
 router.get('/', async (req, res, next) => {
   try {
-    const products = await Product.find().sort({ size: 1 });
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('size', { ascending: true });
+
+    if (error) throw error;
+
     res.json({
       success: true,
-      data: products,
+      data: data || [],
     });
   } catch (error) {
     next(error);
@@ -20,10 +26,26 @@ router.get('/', async (req, res, next) => {
 // Add product (Admin)
 router.post('/', authMiddleware, async (req, res, next) => {
   try {
-    const product = await Product.create(req.body);
+    const { size, priceRange, MOQ, description, imageUrl, deliveryTime } = req.body;
+
+    const { data, error } = await supabase
+      .from('products')
+      .insert({
+        size,
+        price_range: priceRange,
+        moq: MOQ,
+        description,
+        image_url: imageUrl,
+        delivery_time: deliveryTime,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
     res.status(201).json({
       success: true,
-      data: product,
+      data,
     });
   } catch (error) {
     next(error);
@@ -33,19 +55,31 @@ router.post('/', authMiddleware, async (req, res, next) => {
 // Update product (Admin)
 router.put('/:id', authMiddleware, async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const { size, priceRange, MOQ, description, imageUrl, deliveryTime } = req.body;
 
-    if (!product) {
+    const { data, error } = await supabase
+      .from('products')
+      .update({
+        size,
+        price_range: priceRange,
+        moq: MOQ,
+        description,
+        image_url: imageUrl,
+        delivery_time: deliveryTime,
+      })
+      .eq('id', req.params.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    if (!data) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
     res.json({
       success: true,
-      data: product,
+      data,
     });
   } catch (error) {
     next(error);
@@ -55,11 +89,12 @@ router.put('/:id', authMiddleware, async (req, res, next) => {
 // Delete product (Admin)
 router.delete('/:id', authMiddleware, async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', req.params.id);
 
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
+    if (error) throw error;
 
     res.json({
       success: true,

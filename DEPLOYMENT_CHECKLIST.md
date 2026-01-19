@@ -1,33 +1,44 @@
-# ✅ DEPLOYMENT CHECKLIST
+# 🚀 Deployment Checklist - Updated 2024
 
-Print this out and check off each item!
-
----
-
-## PHASE 1: PREPARATION (5 minutes)
-
-- [ ] Open file: `/client/src/utils/constants.js`
-- [ ] Find line 11: `export const BUSINESS_WHATSAPP`
-- [ ] Have your WhatsApp number ready
-- [ ] Ready to edit? Continue ▼
+Complete data flow testing before deploying to production.
 
 ---
 
-## PHASE 2: CONFIGURATION (1 minute)
+## Pre-Deployment Testing
 
-- [ ] Change: `BUSINESS_WHATSAPP = '919876543210'`
-- [ ] To: Your WhatsApp number (e.g., '919999999999')
-- [ ] Also update: `BUSINESS_PHONE` on line 10
-- [ ] Also update: `BUSINESS_EMAIL` on line 12
-- [ ] Save the file
-- [ ] Verify changes saved? Continue ▼
+### Local Testing (Before Any Deployment)
 
----
+- [ ] Backend starts without errors: `npm start`
+- [ ] Frontend starts without errors: `npm run dev`
+- [ ] No console errors in browser (F12)
+- [ ] Products load from API
+- [ ] Can submit inquiry form
+- [ ] Data appears in Supabase
+- [ ] Can upload files
+- [ ] Admin login works
+- [ ] Admin dashboard displays inquiries
+- [ ] Can update inquiry status
 
-## PHASE 3: LOCAL TESTING (10 minutes)
+### API Testing
 
-- [ ] Open terminal/command prompt
-- [ ] Navigate: `cd client`
+- [ ] `GET /` returns API info
+- [ ] `GET /api/health` returns status: ok
+- [ ] `GET /api/products` returns product array
+- [ ] `POST /api/inquiry` creates record in DB
+- [ ] `POST /api/upload` returns Cloudinary URL
+- [ ] `POST /api/admin/login` returns JWT token
+- [ ] Protected routes reject invalid token
+- [ ] CORS headers present in responses
+
+### Database Testing
+
+- [ ] Can connect to Supabase
+- [ ] Products table has data
+- [ ] Inquiries table accessible
+- [ ] Admins table has test user
+- [ ] Can insert new records
+- [ ] Can read records
+- [ ] Indexes working properly
 - [ ] Run: `npm install` (if first time)
 - [ ] Run: `npm run dev`
 - [ ] Wait for: "Local: http://localhost:5173"

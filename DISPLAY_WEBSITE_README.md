@@ -103,7 +103,7 @@ Edit `/client/tailwind.config.js` to customize colors and theme.
 ## File Structure
 
 ```
-client/
+frontend/
 ├── src/
 │   ├── components/
 │   │   ├── Navbar.jsx

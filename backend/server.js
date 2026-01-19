@@ -14,7 +14,7 @@ import uploadRoutes from './routes/upload.js';
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB before handling requests
+// Connect to Supabase before handling requests
 connectDB();
 
 // Initialize Express app
@@ -43,6 +43,20 @@ const apiLimiter = rateLimit({
 
 app.use('/api/', apiLimiter);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    message: 'Shivuu Aqua Supplies Backend API',
+    endpoints: {
+      health: '/api/health',
+      products: '/api/products',
+      inquiry: '/api/inquiry',
+      upload: '/api/upload'
+    }
+  });
+});
+
 // Routes
 app.use('/api/inquiry', inquiryRoutes);
 app.use('/api/products', productRoutes);
@@ -51,7 +65,7 @@ app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
+  res.json({ status: 'ok', message: 'Server is running with Supabase' });
 });
 
 // Error handling middleware

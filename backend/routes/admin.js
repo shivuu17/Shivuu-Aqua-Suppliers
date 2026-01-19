@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import Admin from '../models/Admin.js';
+import bcrypt from 'bcryptjs';
+import { supabase } from '../config/db.js';
 
 const router = express.Router();
 
@@ -13,13 +14,23 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ message: 'Username and password are required' });
     }
 
-    const admin = await Admin.findOne({ username });
+    const { data: admin, error } = await supabase
+      .from('admins')
+      .select('*')
+      .eq('username', username)
+      .single();
 
-    if (!admin || !(await admin.comparePassword(password))) {
+    if (error || !admin) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign({ id: admin.id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
 
@@ -27,7 +38,7 @@ router.post('/login', async (req, res, next) => {
       success: true,
       token,
       admin: {
-        id: admin._id,
+        id: admin.id,
         username: admin.username,
         email: admin.email,
       },

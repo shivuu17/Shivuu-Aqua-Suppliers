@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import Admin from '../models/Admin.js';
+import { createClient } from '@supabase/supabase-js';
+import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -11,15 +11,27 @@ dotenv.config({ path: join(__dirname, '../.env') });
 
 const createAdmin = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/shivuu-aqua');
-    console.log('Connected to MongoDB');
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      {
+        auth: { autoRefreshToken: false, persistSession: false },
+      }
+    );
+
+    console.log('Connected to Supabase');
 
     // Check if admin already exists
-    const existingAdmin = await Admin.findOne({ username: 'admin' });
+    const { data: existingAdmin, error: checkError } = await supabase
+      .from('admins')
+      .select('*')
+      .eq('username', 'admin')
+      .single();
+
     if (existingAdmin) {
       console.log('Admin user already exists!');
       console.log('Username:', existingAdmin.username);
-      console.log('\nTo reset password, manually update in MongoDB or delete this admin first.');
+      console.log('\nTo reset password, manually update in Supabase or delete this admin first.');
       process.exit(0);
     }
 
@@ -32,12 +44,21 @@ const createAdmin = async () => {
       console.log('IMPORTANT: Change this password immediately after first login!\n');
     }
 
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
     // Create new admin
-    const admin = await Admin.create({
-      username: 'admin',
-      password: password,
-      email: process.env.ADMIN_EMAIL || 'admin@shivuuaqua.com',
-    });
+    const { data: admin, error } = await supabase
+      .from('admins')
+      .insert({
+        username: 'admin',
+        password: hashedPassword,
+        email: process.env.ADMIN_EMAIL || 'admin@shivuuaqua.com',
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
 
     console.log('✓ Admin user created successfully!');
     console.log('Username:', admin.username);
