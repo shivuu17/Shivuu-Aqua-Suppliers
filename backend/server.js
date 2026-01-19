@@ -1,5 +1,9 @@
-import express from 'express';
 import dotenv from 'dotenv';
+
+// Load environment variables FIRST before any other imports
+dotenv.config();
+
+import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import connectDB from './config/db.js';
@@ -10,9 +14,6 @@ import inquiryRoutes from './routes/inquiry.js';
 import productRoutes from './routes/product.js';
 import adminRoutes from './routes/admin.js';
 import uploadRoutes from './routes/upload.js';
-
-// Load environment variables
-dotenv.config();
 
 // Connect to Supabase before handling requests
 connectDB();
