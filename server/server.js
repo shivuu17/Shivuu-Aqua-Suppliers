@@ -14,17 +14,45 @@ import uploadRoutes from './routes/upload.js';
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB
+// Connect to MongoDB before handling requests
 connectDB();
 
 // Initialize Express app
 const app = express();
 
+// Respect proxy headers (needed on Vercel/Railway) so rate limits see real IPs
+app.set('trust proxy', 1);
+
 // Middleware
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
+const corsOptions = {
+  origin(origin, callback) {
+    // Allow non-browser clients or same-origin requests without an Origin header
+    if (!origin) return callback(null, true);
+
+    // Support wildcard domains like https://*.vercel.app
+    const isAllowed = allowedOrigins.some((allowed) => {
+      if (allowed === '*') return true;
+      if (allowed.startsWith('*.')) {
+        return origin.endsWith(allowed.slice(1));
+      }
+      return origin === allowed;
+    });
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

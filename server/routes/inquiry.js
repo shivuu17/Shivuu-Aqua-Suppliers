@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator';
 import Inquiry from '../models/Inquiry.js';
 import { sendInquiryConfirmation } from '../utils/email.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { syncInquiryToSupabase } from '../utils/supabaseClient.js';
 
 const router = express.Router();
 
@@ -25,6 +26,13 @@ router.post(
       }
 
       const inquiry = await Inquiry.create(req.body);
+
+      // Optional: replicate inquiry data to Supabase if configured
+      try {
+        await syncInquiryToSupabase(inquiry);
+      } catch (syncError) {
+        console.error('Failed to sync inquiry to Supabase:', syncError.message);
+      }
       
       // Send email notification
       await sendInquiryConfirmation(inquiry);
