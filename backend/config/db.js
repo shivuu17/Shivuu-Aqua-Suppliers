@@ -1,4 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+// Ensure dotenv is loaded
+dotenv.config();
 
 // Create Supabase client lazily
 let supabase = null;
@@ -10,6 +14,8 @@ export const getSupabase = () => {
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       console.error('❌ Missing Supabase credentials!');
+      console.error('SUPABASE_URL:', SUPABASE_URL);
+      console.error('SUPABASE_SERVICE_ROLE_KEY:', SUPABASE_SERVICE_ROLE_KEY ? 'Set' : 'Missing');
       console.error('Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in your .env file');
       process.exit(1);
     }
